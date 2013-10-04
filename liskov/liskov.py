@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
-__all__=['behave_as', 'can_substitute', 'subtypeof']
+__all__=['behave_as', 'can_substitute', 'subtypeof', 'append_sys_path']
+
 
 def behave_as(*bases):
     dynamic_bases = __load_bases(bases)
@@ -14,7 +15,7 @@ def behave_as(*bases):
 def subtypeof(base):
     mod_name, sep, cls_name = base.rpartition('.')
     module = __import__(mod_name, globals(), locals(), [cls_name])
-    return getattr(module, cls_name, object)
+    return getattr(module, cls_name)
 
 
 def can_substitute(*bases):
@@ -26,6 +27,13 @@ def can_substitute(*bases):
         return type(cls.__name__, bases, attrs)
 
     return liskov
+
+def append_sys_path(path):
+    import sys, os
+    if os.path.isfile(path):
+        path = os.path.dirname(path)
+
+    sys.path.append(os.path.realpath(path))
 
 def __load_bases(bases):
     dynamic_bases = tuple()
