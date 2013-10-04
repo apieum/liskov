@@ -19,9 +19,15 @@ You can just import it in a function, but to not repeat this every time,
 I've made a small util, wich offers 3 ways to declare a subtype test.
 
 Each solution gives you different expressiveness depending on your preference:
-  - "subtypeof" function which just import and return a class from a module given as string argument.
+  - "subtype" function which just import and return a class from a module given as string argument.
   - "behave_as" metaclass generator function which returns a metaclass from given modules.
   - "can_substitute" decorator wich returns the class extending modules given as arguments.
+
+Liskov and Wing classified subtype relationships in two broad categories:
+  - Extension subtypes: add methods or eventually states to supertypes
+  - Constrained subtypes: when supertype enable variations in subtypes
+
+Since version 0.2 you can find some helpers to define constraints.(see example 4)
 
 ---------------------------------------------------------------------
 
@@ -32,7 +38,7 @@ Each solution gives you different expressiveness depending on your preference:
     :local:
     :depth: 1
     :backlinks: none
-    
+
 =============
 Installation
 =============
@@ -46,22 +52,22 @@ or from sources::
   git clone git@github.com:apieum/liskov.git
   cd liskov
   python setup.py install
-  
+
 =====
 Usage
 =====
 
 ------------------------
-Example 1 - "subtypeof":
+Example 1 - "subtype":
 ------------------------
   Not so suitable when a subtype inherits of several supertypes.
 
 
 .. code-block:: python
 
-    from liskov import subtypeof
+    from liskov import subtype
 
-    class ScientificCalcTest(subtypeof('testCalc.BasicCalcTest'), subtypeof('testConvert.BaseConverterTest')):
+    class ScientificCalcTest(subtype('testCalc.BasicCalcTest'), subtype('testConvert.BaseConverterTest')):
       def test_it_is_a_subtype_of_BasicCalc(self):
         from testCalc import BasicCalcTest
         assert isinstance(self, BasicCalcTest)
@@ -107,6 +113,63 @@ Example 3 - "can_substitute":
       def test_it_is_a_subtype_of_BaseConverter(self):
         from testConvert import BaseConverterTest
         assert isinstance(self, BaseConverterTest)
+
+
+-----------------------------
+Example 4 - Constraints:
+-----------------------------
+
+This example follow Liskov and Wing constrained subtypes Elephants hierarchy example
+from "Behavioural Subtyping using invariants and constraints" (link above)
+
+Elephants can be white, green or blue
+RoyalElephant is always blue
+AlbinoElephant is always white
+
+Each instance of Elephant in ElephantTest is made with "new_elephant"
+ElephantTest test if an Elephant can be white, green or blue.
+
+
+*Declare Constraints with a decorator*
+
+
+.. code-block:: python
+
+    from liskov import can_substitute, under_constraint
+    import elephant
+
+    @can_substitute('elephant.ElephantTest')
+    @under_constraint('test_it_can_be_grey', 'test_it_can_be_white')
+    class RoyalElephantTest(object):
+      def new_elephant(self, *args):
+        return elephant.RoyalElephant()
+
+
+*Declare Constraints with metaclass*
+
+
+.. code-block:: python
+
+    from liskov import behave_as
+    import elephant
+
+    class RoyalElephantTest(object):
+      __metaclass__ = behave_as('elephant.ElephantTest').except_for('test_it_can_be_grey', 'test_it_can_be_white')
+      def new_elephant(self, *args):
+        return elephant.RoyalElephant()
+
+
+*Declare Constraints with subtype function*
+  bind "subtype" to "constrain" with any of these operators: "& | + -"
+
+.. code-block:: python
+
+    from liskov import subtype, constrain
+    import elephant
+
+    class RoyalElephantTest(subtype('elephant.ElephantTest') & constrain('test_it_can_be_grey', 'test_it_can_be_white')):
+      def new_elephant(self, *args):
+        return elephant.RoyalElephant()
 
 
 ===========
