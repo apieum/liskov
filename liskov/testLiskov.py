@@ -17,7 +17,7 @@ class LiskovSubstitutionTest(unittest.TestCase):
         assert issubclass(ScientificCalc, (BasicCalc, BasesConvert))
 
 
-    def test_substitute_metaclass_create_new_subtype(self):
+    def test_behave_as_metaclass_create_new_subtype(self):
         class ScientificCalc(object):
             __metaclass__ = behave_as('calc.BasicCalc', 'convert.BasesConvert')
 
@@ -37,8 +37,16 @@ import elephant
 class ConstrainedSubtypeTest(unittest.TestCase):
     def test_can_substitute_except_constraints(self):
         @can_substitute('elephant.ElephantTest')
-        @without('test_it_can_be_grey', 'test_it_can_be_white')
+        @apart_from('test_it_can_be_grey', 'test_it_can_be_white')
         class RoyalElephantTest(object):
+            def new_elephant(self, color):
+                return elephant.RoyalElephant(color)
+
+        self.__run(RoyalElephantTest)
+
+    def test_behave_as_except_constraints(self):
+        class RoyalElephantTest(object):
+            __metaclass__ = behave_as('elephant.ElephantTest').apart_from('test_it_can_be_grey', 'test_it_can_be_white')
             def new_elephant(self, color):
                 return elephant.RoyalElephant(color)
 
