@@ -32,3 +32,19 @@ class LiskovSubstitutionTest(unittest.TestCase):
 
         from calc import BasicCalc
         assert issubclass(ScientificCalc, BasicCalc)
+
+import elephant
+class ConstrainedSubtypeTest(unittest.TestCase):
+    def test_can_substitute_except_constraints(self):
+        @can_substitute('elephant.ElephantTest')
+        @without('test_it_can_be_grey', 'test_it_can_be_white')
+        class RoyalElephantTest(object):
+            def new_elephant(self, color):
+                return elephant.RoyalElephant(color)
+
+        self.__run(RoyalElephantTest)
+
+    def __run(self, testCase):
+        loader = unittest.TestLoader()
+        suite = loader.loadTestsFromTestCase(testCase)
+        suite.debug()
