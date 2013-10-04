@@ -10,7 +10,7 @@ in order to define more precisely the notion of subtypes.
 
 For more details read: http://reports-archive.adm.cs.cmu.edu/anon/1999/CMU-CS-99-156.ps
 
-To ensure a certain respect of Liskov Substittution principle in your program,
+To ensure a certain respect of Liskov Substitution principle in your program,
 you can simply make your subtypes tests extends your supertypes tests, but
 importing a supertype test directly in subtype file make the test
 being recognized by unit tests runners and run it several times.
@@ -20,8 +20,8 @@ I've made a small util, wich offers 3 ways to declare a subtype test.
 
 Each solution gives you different expressiveness depending on your preference:
   - "subtypeof" function which just import and return a class from a module given as string argument.
-  - "behave_as" metaclass generator function which returns a metaclass from given modules
-  - "can_substitute" decorator wich returns the class extending the modules given as arguments
+  - "behave_as" metaclass generator function which returns a metaclass from given modules.
+  - "can_substitute" decorator wich returns the class extending modules given as arguments.
 
 ---------------------------------------------------------------------
 
