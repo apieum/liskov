@@ -3,7 +3,7 @@ Liskov Utility
 **************
 
 .. image:: https://pypip.in/v/liskov/badge.png
-        :target: https://pypi.python.org/packages/liskov
+        :target: https://pypi.python.org/pypi/liskov
 
 Utility to check if your subtypes pass supertypes tests.
 
@@ -64,14 +64,16 @@ Usage
 ------------------------
 Example 1 - "subtype":
 ------------------------
-  Not so suitable when a subtype inherits of several supertypes.
+  Use a lambda if too long.
 
 
 .. code-block:: python
 
     from liskov import subtype
 
-    class ScientificCalcTest(subtype('testCalc.BasicCalcTest'), subtype('testConvert.BaseConverterTest')):
+    BasicCalc = lambda: subtype('testCalc.BasicCalcTest')
+    BaseConverter = lambda: subtype('testConvert.BaseConverterTest')
+    class ScientificCalcTest(BasicCalc(), BaseConverter()):
       def test_it_is_a_subtype_of_BasicCalc(self):
         from testCalc import BasicCalcTest
         assert isinstance(self, BasicCalcTest)
@@ -83,6 +85,7 @@ Example 1 - "subtype":
 ------------------------
 Example 2 - "behave_as":
 ------------------------
+*Python 2 version*
 
 .. code-block:: python
 
@@ -91,6 +94,25 @@ Example 2 - "behave_as":
     class ScientificCalcTest(object):
       __metaclass__ = behave_as('testCalc.BasicCalcTest', 'testConvert.BaseConverterTest')
 
+      def test_it_is_a_subtype_of_BasicCalc(self):
+        from testCalc import BasicCalcTest
+        assert isinstance(self, BasicCalcTest)
+
+      def test_it_is_a_subtype_of_BaseConverter(self):
+        from testConvert import BaseConverterTest
+        assert isinstance(self, BaseConverterTest)
+
+
+
+*Python 3 version*
+
+.. code-block:: python
+
+    from liskov import behave_as
+
+    metaclass = behave_as('testCalc.BasicCalcTest', 'testConvert.BaseConverterTest')
+
+    class ScientificCalcTest(object, metaclass=metaclass):
       def test_it_is_a_subtype_of_BasicCalc(self):
         from testCalc import BasicCalcTest
         assert isinstance(self, BasicCalcTest)
@@ -151,6 +173,7 @@ ElephantTest test if an Elephant can be white, green or blue.
 
 *Declare Constraints with metaclass*
 
+Python 2 version
 
 .. code-block:: python
 
@@ -163,6 +186,20 @@ ElephantTest test if an Elephant can be white, green or blue.
         return elephant.RoyalElephant()
 
 
+
+Python 3 version
+
+.. code-block:: python
+
+    from liskov import behave_as
+    import elephant
+
+    metaclass = behave_as('elephant.ElephantTest').except_for('test_it_can_be_grey', 'test_it_can_be_white')
+    class RoyalElephantTest(object, metaclass=metaclass):
+      def new_elephant(self, *args):
+        return elephant.RoyalElephant()
+
+
 *Declare Constraints with subtype function*
   bind "subtype" to "constrain" with any of these operators: "& | + -"
 
@@ -171,7 +208,9 @@ ElephantTest test if an Elephant can be white, green or blue.
     from liskov import subtype, constrain
     import elephant
 
-    class RoyalElephantTest(subtype('elephant.ElephantTest') & constrain('test_it_can_be_grey', 'test_it_can_be_white')):
+    ConstrainedElephantTest = lambda: subtype('elephant.ElephantTest') & constrain('test_it_can_be_grey', 'test_it_can_be_white')
+
+    class RoyalElephantTest(ConstrainedElephantTest()):
       def new_elephant(self, *args):
         return elephant.RoyalElephant()
 
@@ -188,8 +227,6 @@ Launch test::
   cd liskov
   nosetests --with-spec --spec-color
 
+
 .. image:: https://secure.travis-ci.org/apieum/liskov.png?branch=master
    :target: https://travis-ci.org/apieum/liskov
-
-.. image:: https://pypip.in/d/liskov/badge.png
-        :target: https://pypi.python.org/packages/liskov

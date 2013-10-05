@@ -5,7 +5,7 @@ import os
 pkgName = 'liskov'
 setup(
     name=pkgName,
-    version='0.2',
+    version='0.2.2',
     url='http://www.python.org/pypi/' + pkgName,
     author='Grégory Salvan',
     author_email='apieum@gmail.com',
