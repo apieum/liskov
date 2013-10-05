@@ -74,7 +74,7 @@ def _remove_bases_behaviours(bases, behaviours):
 
 def _remove_behaviours(attrs, behaviours):
     new_attrs = dict()
-    for key, value in attrs.items():
+    for key, value in list(attrs.items()):
         if key not in behaviours:
             new_attrs[key] = value
     return new_attrs

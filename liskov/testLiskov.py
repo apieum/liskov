@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+import sys
 import unittest
 
 from .liskov import behave_as, can_substitute, subtype, append_sys_path, constrain, under_constraint
@@ -23,8 +24,12 @@ class LiskovSubstitutionTest(unittest.TestCase):
 
 
     def test_behave_as_metaclass_create_new_subtype(self):
-        class ScientificCalc(object):
-            __metaclass__ = behave_as('calc.BasicCalc', 'convert.BasesConvert')
+        CalcConvert = behave_as('calc.BasicCalc', 'convert.BasesConvert')
+        if sys.version < '3':
+            class ScientificCalc(object):
+                __metaclass__ = CalcConvert
+        else:
+            ScientificCalc = CalcConvert('ScientificCalc', (object, ), {})
 
         from calc import BasicCalc
         from convert import BasesConvert
@@ -49,10 +54,17 @@ class ConstrainedSubtypeTest(unittest.TestCase):
         self.__run(RoyalElephantTest)
 
     def test_behave_as_except_constraints(self):
-        class RoyalElephantTest(object):
-            __metaclass__ = behave_as('elephant.ElephantTest').except_for('test_it_can_be_grey', 'test_it_can_be_white')
+        ElephantTest = behave_as('elephant.ElephantTest').except_for('test_it_can_be_grey', 'test_it_can_be_white')
+        if sys.version < '3':
+            class RoyalElephantTest(object):
+                __metaclass__ = ElephantTest
+
+                def new_elephant(self, color):
+                    return elephant.RoyalElephant(color)
+        else:
             def new_elephant(self, color):
                 return elephant.RoyalElephant(color)
+            RoyalElephantTest = ElephantTest('RoyalElephantTest', (object, ), {'new_elephant': new_elephant})
 
         self.__run(RoyalElephantTest)
 
@@ -67,3 +79,6 @@ class ConstrainedSubtypeTest(unittest.TestCase):
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromTestCase(testCase)
         suite.debug()
+
+if __name__ == "__main__":
+    unittest.main()
