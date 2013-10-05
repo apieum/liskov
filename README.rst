@@ -1,6 +1,10 @@
 **************
 Liskov Utility
 **************
+
+.. image:: https://pypip.in/v/liskov/badge.png
+        :target: https://pypi.python.org/packages/liskov
+
 Utility to check if your subtypes pass supertypes tests.
 
 
@@ -183,3 +187,9 @@ Launch test::
   git clone git@github.com:apieum/liskov.git
   cd liskov
   nosetests --with-spec --spec-color
+
+.. image:: https://secure.travis-ci.org/apieum/liskov.png?branch=master
+   :target: https://travis-ci.org/apieum/liskov
+
+.. image:: https://pypip.in/d/liskov/badge.png
+        :target: https://pypi.python.org/packages/liskov

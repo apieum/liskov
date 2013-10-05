@@ -1,2 +1,3 @@
 # -*- coding: utf8 -*-
-from liskov import *
+
+from .liskov import *

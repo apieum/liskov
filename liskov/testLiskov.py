@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import unittest
-from liskov import *
+
+from .liskov import behave_as, can_substitute, subtype, append_sys_path, constrain, under_constraint
 
 import os.path
 __dir__ = os.path.dirname(os.path.abspath(__file__))
